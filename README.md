@@ -146,7 +146,8 @@ Clinical safety analysis of the AE domain structured for Data Review Meeting mee
 
 ## Author
 **Rutuj Argade**
-B.Pharm | Head Pharmacist transitioning to CDM
+B. Pharm | Head Pharmacist transitioning to CDM  
+
 Certifications: Vanderbilt CDM | SAS Programming 1 | 
 ICH-GCP E6(R3) | CDISC TIG v1.0 | NIDA CTN | SQL | Excel
 
