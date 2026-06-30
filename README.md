@@ -85,8 +85,8 @@ sites — flagged as systematic unit-value mismatches consistent with EDC config
 **Findings:**
 - VS range violations — 989 records
 - Unit-value mismatches — 4,762 records
-- LB range violations — 4,561 records
-- **Total: 10,312 open queries raised**
+- LB range violations — 4,555 records
+- **Total: 10,306 open queries raised**
 
 ---
 
@@ -98,8 +98,8 @@ CDM tracking and site follow-up.
 |---|---|---|---|
 | Check 1 | Missing Data | DM, VS | 60 |
 | Check 2 | Chronology Error | AE | 65 |
-| Check 3 | Range or Unit | VS, LB | 10,312 |
-| **Total** | | | **10,437** |
+| Check 3 | Range or Unit | VS, LB | 10,306 |
+| **Total** | | | **10,431** |
 
 ---
 
