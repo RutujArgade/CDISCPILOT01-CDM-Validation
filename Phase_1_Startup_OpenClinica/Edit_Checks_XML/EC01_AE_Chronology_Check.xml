@@ -1,0 +1,58 @@
+<RuleImport>
+  
+  <RuleAssignment>
+    <Target Context="OC_RULES_V1">SE_BASELINE.F_ADVERSE_EVEN_V11.IG_ADVER_AE_GROUP.I_ADVER_AESTDAT</Target>
+    <RuleRef OID="RULE_EC01">
+      <DiscrepancyNoteAction IfExpressionEvaluates="true">
+        <Run AdministrativeDataEntry="true" InitialDataEntry="true" DoubleDataEntry="true" ImportDataEntry="false" Batch="true"/>
+        <Message>AE start date precedes enrollment date - please verify.</Message>
+      </DiscrepancyNoteAction>
+    </RuleRef>
+  </RuleAssignment>
+
+  <RuleAssignment>
+    <Target Context="OC_RULES_V1">SE_WEEK4.F_ADVERSE_EVEN_V11.IG_ADVER_AE_GROUP.I_ADVER_AESTDAT</Target>
+    <RuleRef OID="RULE_EC01">
+      <DiscrepancyNoteAction IfExpressionEvaluates="true">
+        <Run AdministrativeDataEntry="true" InitialDataEntry="true" DoubleDataEntry="true" ImportDataEntry="false" Batch="true"/>
+        <Message>AE start date precedes enrollment date - please verify.</Message>
+      </DiscrepancyNoteAction>
+    </RuleRef>
+  </RuleAssignment>
+
+  <RuleAssignment>
+    <Target Context="OC_RULES_V1">SE_WEEK8.F_ADVERSE_EVEN_V11.IG_ADVER_AE_GROUP.I_ADVER_AESTDAT</Target>
+    <RuleRef OID="RULE_EC01">
+      <DiscrepancyNoteAction IfExpressionEvaluates="true">
+        <Run AdministrativeDataEntry="true" InitialDataEntry="true" DoubleDataEntry="true" ImportDataEntry="false" Batch="true"/>
+        <Message>AE start date precedes enrollment date - please verify.</Message>
+      </DiscrepancyNoteAction>
+    </RuleRef>
+  </RuleAssignment>
+
+  <RuleAssignment>
+    <Target Context="OC_RULES_V1">SE_WEEK12.F_ADVERSE_EVEN_V11.IG_ADVER_AE_GROUP.I_ADVER_AESTDAT</Target>
+    <RuleRef OID="RULE_EC01">
+      <DiscrepancyNoteAction IfExpressionEvaluates="true">
+        <Run AdministrativeDataEntry="true" InitialDataEntry="true" DoubleDataEntry="true" ImportDataEntry="false" Batch="true"/>
+        <Message>AE start date precedes enrollment date - please verify.</Message>
+      </DiscrepancyNoteAction>
+    </RuleRef>
+  </RuleAssignment>
+
+  <RuleAssignment>
+    <Target Context="OC_RULES_V1">SE_ENDOFSTUDY.F_ADVERSE_EVEN_V11.IG_ADVER_AE_GROUP.I_ADVER_AESTDAT</Target>
+    <RuleRef OID="RULE_EC01">
+      <DiscrepancyNoteAction IfExpressionEvaluates="true">
+        <Run AdministrativeDataEntry="true" InitialDataEntry="true" DoubleDataEntry="true" ImportDataEntry="false" Batch="true"/>
+        <Message>AE start date precedes enrollment date - please verify.</Message>
+      </DiscrepancyNoteAction>
+    </RuleRef>
+  </RuleAssignment>
+
+  <RuleDef OID="RULE_EC01" Name="EC-01 AE Date Check">
+    <Description>Flags if AE start date is before Enrollment date</Description>
+    <Expression>I_ADVER_AESTDAT lt SE_SCREENING.F_DEMOGRAPHICS_44_V12.IG_DEMOG_DM_GROUP.I_DEMOG_ENRDAT</Expression>
+  </RuleDef>
+  
+</RuleImport>

@@ -1,0 +1,37 @@
+<RuleImport>
+
+  <!-- EC-02 Assignment -->
+  <RuleAssignment>
+    <Target Context="OC_RULES_V1">I_VITAL_VSTEMP</Target>
+    <RuleRef OID="RULE_EC02">
+      <DiscrepancyNoteAction IfExpressionEvaluates="true">
+        <Run AdministrativeDataEntry="true" InitialDataEntry="true" DoubleDataEntry="true" ImportDataEntry="false" Batch="true" />
+        <Message>Temperature outside plausible range for selected unit - please verify</Message>
+      </DiscrepancyNoteAction>
+    </RuleRef>
+  </RuleAssignment>
+
+  <!-- EC-03 Assignment -->
+  <RuleAssignment>
+    <Target Context="OC_RULES_V1">I_DEMOG_BRTHDTC</Target>
+    <RuleRef OID="RULE_EC03">
+      <DiscrepancyNoteAction IfExpressionEvaluates="true">
+        <Run AdministrativeDataEntry="true" InitialDataEntry="true" DoubleDataEntry="true" ImportDataEntry="false" Batch="true" />
+        <Message>Subject age below protocol eligibility criteria - please verify</Message>
+      </DiscrepancyNoteAction>
+    </RuleRef>
+  </RuleAssignment>
+
+  <!-- EC-02 Definition -->
+  <RuleDef OID="RULE_EC02" Name="EC02 VS TEMP RANGE CHECK">
+    <Description>Flags TEMP values outside plausible range for the selected unit</Description>
+    <Expression>(I_VITAL_VSTEMPU eq "C" and (I_VITAL_VSTEMP lt 34 or I_VITAL_VSTEMP gt 42)) or (I_VITAL_VSTEMPU eq "F" and (I_VITAL_VSTEMP lt 93.2 or I_VITAL_VSTEMP gt 107.6))</Expression>
+  </RuleDef>
+
+  <!-- EC-03 Definition -->
+  <RuleDef OID="RULE_EC03" Name="EC03 AGE ELIGIBILITY CHECK">
+    <Description>Flags subjects below minimum protocol eligibility age at screening</Description>
+    <Expression>I_DEMOG_BRTHDTC gt "1976-07-14"</Expression>
+  </RuleDef>
+
+</RuleImport>
