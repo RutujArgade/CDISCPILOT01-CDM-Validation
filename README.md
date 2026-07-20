@@ -1,41 +1,93 @@
-# CDISCPILOT01 — Clinical Data Management Portfolio Project
+# CDISCPILOT01 — End-to-End Clinical Data Management Lifecycle
 
-## Overview
-End-to-end Clinical Data Management validation project using the publicly available CDISC Pilot Study dataset 
-(CDISCPILOT01) — a real Alzheimer's disease efficacy trial submitted to the FDA. Built entirely in SAS Studio on 
-SAS OnDemand for Academics.
+A two-phase Clinical Data Management portfolio project built on the CDISC Pilot Study (CDISCPILOT01) — a real Alzheimer's disease efficacy trial submitted to the FDA.
 
----
+📄 **[Project_Evidence_Summary.pdf](./Phase_1_Startup_OpenClinica/Project_Evidence_Summary.pdf)** — full evidence walkthrough containing every eCRF, XML edit check, UAT execution screenshot, and query lifecycle.
+
+Phase 1 covers the front-end Study Start-Up & EDC Build in OpenClinica, executed using simulated mock subjects. Phase 2 covers the back-end Data Standardization & Validation in SAS Studio, using the trial's full 254-subject dataset.
+
+## Why This Project Has Two Phases
+Phase 1 covers the EDC build and governance side — configuring, validating, and formally launching the data collection system itself, before a single statistical query is raised. Phase 2 covers the retrospective side — cleaning and validating the data after it's been collected. The two phases use different query mechanisms on purpose: Phase 1's fire in real time as data is entered; Phase 2's run in batch across the full locked dataset.
+
+## Why OpenClinica
+Most entry-level CDM postings ask for hands-on experience with a commercial EDC platform like Rave, Veeva Vault, or Oracle Clinical. Those are licensed exclusively to sponsors and CROs, leaving a gap for independent hands-on experience. OpenClinica Community Edition is an open-source, GCP-aligned EDC. While it lacks a commercial vendor's name, the underlying competency is identical: eCRF design, edit check logic, UAT methodology, and discrepancy management.
 
 ## Study Background
-- **Study:** CDISCPILOT01 — Xanomeline vs Placebo Alzheimer's Disease Trial
-- **Standard:** CDISC SDTM v1.2
-- **Subjects:** 254 enrolled across 3 treatment arms
-- **Arms:** Xanomeline High Dose | Low Dose | Placebo
-- **Domains used:** AE, DM, VS, LB, CM, EX, DS, MH, SV, SC
+* **Study:** CDISCPILOT01 — Xanomeline vs Placebo Alzheimer's Disease Trial
+* **Standard:** CDISC SDTM v1.2
+* **Phase 1 (Start-Up):** 3 CRFs (DM, AE, VS) built and tested via mock subjects
+* **Phase 2 (Conduct):** 254 real subjects across 3 arms (Xanomeline High Dose, Low Dose, Placebo)
+* **Domains used:** AE, DM, VS, LB, CM, EX, DS, MH, SV, SC
 
----
+## Repository Structure
 
-## Project Structure
 ```text
-programs/
-├── Import.sas : Raw XPT Data Import                   
-├── Check1_Missing_Data.sas : Missing Values
-├── Check2_Chronology_Errors.sas : Date Validation
-├── Check3_Range_Checks.sas : Physiological and Unit Range Checks
-├── Check4_Master_Query_Log.sas : Query Log
-└── AE_Safety_Summary.sas : Safety Data Review (SDR) Summary
+CDISCPILOT01-CDM-Lifecycle/
+├── Phase_1_Startup_OpenClinica/
+│   ├── Project_Evidence_Summary.pdf
+│   ├── CRF_Specifications/
+│   │   ├── DM_CRF_v1.3.xls
+│   │   ├── AE_CRF_v1.1.xls
+│   │   ├── VS_CRF_v1.0.xls
+│   │   └── Annotated_CRF_AE.pdf
+│   ├── Edit_Checks_XML/
+│   │   ├── EC01_AE_Chronology_Check.xml
+│   │   └── EC02_EC03_Temp_Age_Checks.xml
+│   └── UAT_and_Discrepancy_Management/
+│       └── UAT_Defect_Log_CDISCPILOT01.xlsx
+└── Phase_2_Conduct_SAS/
+    ├── Import.sas
+    ├── Check1_Missing_Data.sas
+    ├── Check2_Chronology_Errors.sas
+    ├── Check3_Range_Checks.sas
+    ├── Check4_Master_Query_Log.sas
+    └── AE_Safety_Summary.sas
 ```
----
+Phase 1: Study Start-Up & EDC Build (OpenClinica)
 
-## Tools and Standards
-- **Language:** SAS (PROC SQL, PROC FREQ, 
-  PROC MEANS, PROC PRINT, SAS Macros)
-- **Standards:** CDISC SDTM, ICH E6(R3) GCP, 21 CFR Part 11
-- **Platform:** SAS Studio — SAS OnDemand for Academics
-- **Dataset:** CDISC Pilot SDTM — available at github.com/phuse-org/phuse-scripts
+Built in OpenClinica Community Edition 3.12.2.
 
----
+Database Build
+CRF	Version	Domain	Mapped SDTM Fields
+Demographics_DM	v1.3	DM	Date of Birth, Sex, Race, Ethnicity, Enrollment Date (ENRDAT)
+Adverse_Events_AE	v1.1	AE	AE Term, Start/End Date, Seriousness, Severity, Relation to Drug, Outcome
+Vital_Signs_VS	v1.0	VS	Temperature (+ unit), Weight (+ unit), Pulse
+Edit Checks (XML)
+
+Three validation rules configured in OpenClinica Rule XML:
+
+ID	Logic	Scope
+EC-01	I_ADVER_AESTDAT < I_DEMOG_ENRDAT — AE date cannot precede enrollment date	Baseline through End of Study — every visit where an AE can be logged
+EC-02	I_VITAL_VSTEMP outside plausible range for selected unit (34–42°C / 93.2–107.6°F)	All 6 visits, Screening through End of Study
+EC-03	Subject Date of Birth falls below protocol age eligibility cutoff	Screening only
+
+EC-02 was specifically programmed to catch systemic data entry errors at the point of entry. The retrospective SAS validation in Phase 2 identified 4,762 historical records with mismatched temperature units — this rule exists to stop that exact failure mode before it happens.
+
+User Acceptance Testing (UAT)
+Test Case	Rule	Condition Tested	Result
+TC-01	EC-01	AE date before enrollment	Pass — error fired, save blocked
+TC-02	EC-01	AE date after enrollment	Pass — saved cleanly
+TC-03	EC-01	AE date equal to enrollment (boundary)	Pass — saved cleanly (confirms strict < logic)
+TC-04	EC-02	Celsius, in range (37.0°C)	Pass — saved cleanly
+TC-05	EC-02	Celsius, out of range (43.0°C)	Pass — error fired, save blocked
+TC-06	EC-02	Fahrenheit, in range (98.6°F)	Pass — saved cleanly
+TC-07	EC-02	Fahrenheit, out of range (108.0°F)	Pass — error fired, save blocked
+TC-08	EC-03	Below age eligibility (DOB 1992)	Pass — error fired, save blocked
+TC-09	EC-03	Meets age eligibility (DOB 1963)	Pass — saved cleanly
+
+Result: 9/9 test cases passed. Full visual execution log is in Project_Evidence_Summary.pdf.
+Query Lifecycle (Production)
+
+Two manual Discrepancy Notes were processed through a full 21 CFR Part 11 compliant audit trail (Raised → Resolution Proposed → Closed):
+
+Q-01 (Data Consistency): A pulse rate entered as 7 bpm — a physiological data entry typo, corrected to 73 bpm after source verification.
+Q-02 (Cross-field Logic): An adverse event marked Serious but coded with Mild severity — a clinical-logic inconsistency, corrected to Severe after review.
+
+With both queries closed, the study was Frozen — blocking new data entry while still allowing discrepancy notes to be worked — then Locked, a hard stop with no further data entry, edits, or query activity.
+
+Phase 2: Data Standardization & Validation (SAS Studio)
+
+Built entirely in SAS Studio on SAS OnDemand for Academics.
 
 ## Data Import
 Imported 10 SDTM domains from raw XPT transport files into a permanent SAS library using a reusable 
@@ -131,24 +183,24 @@ Clinical safety analysis of the AE domain structured for Data Review Meeting mee
 
 ---
 
-## Key CDM Skills Demonstrated
-- SDTM domain structure and variable classification
-- Missing value detection across multiple domains
-- Chronology validation using date comparison logic
-- Range checks with unit-aware clinical thresholds
-- Systematic unit-value mismatch detection
-- Master query log generation and management
-- AE safety summarization for Data Review Meeting
-- SAS macro programming for reusable validation
-- PROC SQL, PROC FREQ, PROC MEANS, PROC PRINT
+Key CDM Skills Demonstrated
+EDC database build, eCRF design, and XML edit check programming (OpenClinica)
 
----
+UAT execution and boundary testing under ICH-GCP E6(R3)
 
-## Author
-**Rutuj Argade**
-B. Pharm | Head Pharmacist transitioning to CDM  
+SDTM domain structure and variable classification
 
-Certifications: Vanderbilt CDM | SAS Programming 1 | 
-ICH-GCP E6(R3) | CDISC TIG v1.0 | NIDA CTN | SQL | Excel
+Missing value, chronology, and unit-aware range validation
 
-LinkedIn Profile: linkedin.com/in/rutuj-argade-cdm
+Master query log generation and management
+
+AE safety summarization for a Data Review Meeting
+
+SAS macro programming for reusable validation (PROC SQL, PROC FREQ, PROC MEANS, PROC PRINT)
+
+Author
+Rutuj Argade — B. Pharm | Head Pharmacist transitioning to CDM
+
+Certifications: Vanderbilt CDM | SAS Programming 1 | ICH-GCP E6(R3) | CDISC TIG v1.0 | NIDA CTN | SQL | Excel
+
+LinkedIn: linkedin.com/in/rutuj-argade-cdm
