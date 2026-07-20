@@ -48,32 +48,36 @@ Phase 1: Study Start-Up & EDC Build (OpenClinica)
 Built in OpenClinica Community Edition 3.12.2.
 
 Database Build
-CRF	Version	Domain	Mapped SDTM Fields
-Demographics_DM	v1.3	DM	Date of Birth, Sex, Race, Ethnicity, Enrollment Date (ENRDAT)
-Adverse_Events_AE	v1.1	AE	AE Term, Start/End Date, Seriousness, Severity, Relation to Drug, Outcome
-Vital_Signs_VS	v1.0	VS	Temperature (+ unit), Weight (+ unit), Pulse
+| CRF | Version | Domain | Mapped SDTM Fields |
+|---|---|---|---|
+| Demographics_DM | v1.3 | DM | Date of Birth, Sex, Race, Ethnicity, Enrollment Date (ENRDAT) |
+| Adverse_Events_AE | v1.1 | AE | AE Term, Start/End Date, Seriousness, Severity, Relation to Drug, Outcome |
+| Vital_Signs_VS | v1.0 | VS | Temperature (+ unit), Weight (+ unit), Pulse |
+
 Edit Checks (XML)
 
 Three validation rules configured in OpenClinica Rule XML:
 
-ID	Logic	Scope
-EC-01	I_ADVER_AESTDAT < I_DEMOG_ENRDAT — AE date cannot precede enrollment date	Baseline through End of Study — every visit where an AE can be logged
-EC-02	I_VITAL_VSTEMP outside plausible range for selected unit (34–42°C / 93.2–107.6°F)	All 6 visits, Screening through End of Study
-EC-03	Subject Date of Birth falls below protocol age eligibility cutoff	Screening only
+| ID | Logic | Scope |
+|---|---|---|
+| EC-01 | `I_ADVER_AESTDAT < I_DEMOG_ENRDAT` — AE date cannot precede enrollment date | Baseline through End of Study — every visit where an AE can be logged |
+| EC-02 | `I_VITAL_VSTEMP` outside plausible range for selected unit (34–42°C / 93.2–107.6°F) | All 6 visits, Screening through End of Study |
+| EC-03 | Subject Date of Birth falls below protocol age eligibility cutoff | Screening only |
 
 EC-02 was specifically programmed to catch systemic data entry errors at the point of entry. The retrospective SAS validation in Phase 2 identified 4,762 historical records with mismatched temperature units — this rule exists to stop that exact failure mode before it happens.
 
 User Acceptance Testing (UAT)
-Test Case	Rule	Condition Tested	Result
-TC-01	EC-01	AE date before enrollment	Pass — error fired, save blocked
-TC-02	EC-01	AE date after enrollment	Pass — saved cleanly
-TC-03	EC-01	AE date equal to enrollment (boundary)	Pass — saved cleanly (confirms strict < logic)
-TC-04	EC-02	Celsius, in range (37.0°C)	Pass — saved cleanly
-TC-05	EC-02	Celsius, out of range (43.0°C)	Pass — error fired, save blocked
-TC-06	EC-02	Fahrenheit, in range (98.6°F)	Pass — saved cleanly
-TC-07	EC-02	Fahrenheit, out of range (108.0°F)	Pass — error fired, save blocked
-TC-08	EC-03	Below age eligibility (DOB 1992)	Pass — error fired, save blocked
-TC-09	EC-03	Meets age eligibility (DOB 1963)	Pass — saved cleanly
+| Test Case | Rule | Condition Tested | Result |
+|---|---|---|---|
+| TC-01 | EC-01 | AE date before enrollment | Pass — error fired, save blocked |
+| TC-02 | EC-01 | AE date after enrollment | Pass — saved cleanly |
+| TC-03 | EC-01 | AE date equal to enrollment (boundary) | Pass — saved cleanly (confirms strict < logic) |
+| TC-04 | EC-02 | Celsius, in range (37.0°C) | Pass — saved cleanly |
+| TC-05 | EC-02 | Celsius, out of range (43.0°C) | Pass — error fired, save blocked |
+| TC-06 | EC-02 | Fahrenheit, in range (98.6°F) | Pass — saved cleanly |
+| TC-07 | EC-02 | Fahrenheit, out of range (108.0°F) | Pass — error fired, save blocked |
+| TC-08 | EC-03 | Below age eligibility (DOB 1992) | Pass — error fired, save blocked |
+| TC-09 | EC-03 | Meets age eligibility (DOB 1963) | Pass — saved cleanly |
 
 Result: 9/9 test cases passed. Full visual execution log is in Project_Evidence_Summary.pdf.
 Query Lifecycle (Production)
