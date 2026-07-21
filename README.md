@@ -188,19 +188,13 @@ Clinical safety analysis of the AE domain structured for Data Review Meeting mee
 ---
 
 Key CDM Skills Demonstrated
-EDC database build, eCRF design, and XML edit check programming (OpenClinica)
-
-UAT execution and boundary testing under ICH-GCP E6(R3)
-
-SDTM domain structure and variable classification
-
-Missing value, chronology, and unit-aware range validation
-
-Master query log generation and management
-
-AE safety summarization for a Data Review Meeting
-
-SAS macro programming for reusable validation (PROC SQL, PROC FREQ, PROC MEANS, PROC PRINT)
+- EDC database build, eCRF design, and XML edit check programming (OpenClinica)
+- UAT execution and boundary-value testing under ICH-GCP E6(R3)
+- CRF-to-SDTM variable mapping (annotated eCRF)
+- Missing value, chronology, and unit-aware range validation using Base SAS (PROC SQL, PROC FREQ, PROC MEANS, PROC PRINT)
+- Master query log consolidation and site-level tracking
+- AE safety summarization for a Data Review Meeting
+- Reusable SAS macro programming for structured data import (PROC COPY)
 
 Author
 Rutuj Argade — B. Pharm | Head Pharmacist transitioning to CDM
